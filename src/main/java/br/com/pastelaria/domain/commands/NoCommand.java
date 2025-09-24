@@ -1,0 +1,9 @@
+package br.com.pastelaria.domain.commands;
+
+import br.com.pastelaria.domain.interfaces.iCommand;
+import br.com.pastelaria.domain.model.EventBot;
+
+public class NoCommand implements iCommand {
+    @Override
+    public void execute(EventBot event) {}
+}
