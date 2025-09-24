@@ -7,6 +7,7 @@ import java.util.HashMap;
 
 public class CommandsStrategy {
     private final HashMap<String, iCommand> commands;
+    private final iCommand defaultCommand = new NoCommand();
 
     public CommandsStrategy() {
         this.commands = new HashMap<>();
@@ -18,6 +19,6 @@ public class CommandsStrategy {
     }
 
     public iCommand getCommand(String command) {
-        return this.commands.getOrDefault(command, new NoCommand());
+        return this.commands.getOrDefault(command, defaultCommand);
     }
 }
