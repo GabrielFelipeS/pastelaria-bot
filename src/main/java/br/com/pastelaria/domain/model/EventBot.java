@@ -9,13 +9,11 @@ public class EventBot {
     private List<String> parts;
     private MessageReceivedEvent event;
 
-    public EventBot(String[] parts, MessageReceivedEvent event) {
-        this.parts = List.of(parts);
-        this.event = event;
-    }
+    public EventBot(MessageReceivedEvent event) {
+        String[] parts = event.getMessage().getContentRaw().split(" ");
 
-    public boolean isCommand(String command) {
-        return this.getCommand().equalsIgnoreCase(command);
+        this.event = event;
+        this.parts = List.of(parts);
     }
 
     public boolean hasParams() {
@@ -46,12 +44,11 @@ public class EventBot {
         return parts.subList(fromIndex, toIndex);
     }
 
-    public MessageReceivedEvent getEvent() {
-        return event;
-    }
-
     public MessageChannel getChannel() {
         return event.getChannel();
     }
 
+    public MessageReceivedEvent getEvent() {
+        return event;
+    }
 }

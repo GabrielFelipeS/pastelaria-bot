@@ -22,9 +22,7 @@ public class Bot extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
-        String[] parts = event.getMessage().getContentRaw().split(" ");
-
-        EventBot eventBot = new EventBot(parts, event);
+        EventBot eventBot = new EventBot(event);
         CommandsStrategy commandsStrategy = new CommandsStrategy();
 
         var command = commandsStrategy.getCommand(eventBot.getCommand());
