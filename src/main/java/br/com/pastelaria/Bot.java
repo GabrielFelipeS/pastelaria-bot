@@ -1,12 +1,13 @@
 package br.com.pastelaria;
 
 import br.com.pastelaria.domain.context.CommandsStrategy;
-import br.com.pastelaria.domain.model.EventBot;
+import br.com.pastelaria.domain.service.EventBot;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import org.jetbrains.annotations.NotNull;
 
 public class Bot extends ListenerAdapter {
     public static void main(String[] args) {
@@ -21,8 +22,9 @@ public class Bot extends ListenerAdapter {
     }
 
     @Override
-    public void onMessageReceived(MessageReceivedEvent event) {
+    public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         EventBot eventBot = new EventBot(event);
+
         CommandsStrategy commandsStrategy = new CommandsStrategy();
 
         var command = commandsStrategy.getCommand(eventBot.getCommand());
