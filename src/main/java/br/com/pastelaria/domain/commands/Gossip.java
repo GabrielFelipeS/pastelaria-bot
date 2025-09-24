@@ -1,11 +1,9 @@
 package br.com.pastelaria.domain.commands;
 
 import br.com.pastelaria.domain.interfaces.iCommand;
-import br.com.pastelaria.domain.model.EventBot;
-import net.dv8tion.jda.api.entities.Message;
+import br.com.pastelaria.domain.service.EventBot;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 
-import java.time.Duration;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -14,9 +12,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Gossip implements iCommand {
     @Override
     public void execute(EventBot event) {
-        MessageChannel channel = event.getChannel();
+        event.deleteCommandMessage();
 
-        channel.getHistory().retrievePast(1).queue(channel::purgeMessages);
+        MessageChannel channel = event.getChannel();
 
         int seconds = 3600;
 

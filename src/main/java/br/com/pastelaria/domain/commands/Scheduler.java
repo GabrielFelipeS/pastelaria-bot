@@ -2,7 +2,7 @@ package br.com.pastelaria.domain.commands;
 
 
 import br.com.pastelaria.domain.interfaces.iCommand;
-import br.com.pastelaria.domain.model.EventBot;
+import br.com.pastelaria.domain.service.EventBot;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 
 import java.util.concurrent.Executors;
@@ -12,6 +12,8 @@ import java.util.concurrent.TimeUnit;
 public class Scheduler implements iCommand {
     @Override
     public void execute(EventBot event) {
+        event.deleteCommandMessage();
+
         MessageChannel channel = event.getChannel();
 
         int seconds = Integer.parseInt(event.getParam(1));
