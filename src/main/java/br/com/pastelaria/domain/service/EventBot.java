@@ -1,40 +1,23 @@
 package br.com.pastelaria.domain.service;
 
+import br.com.pastelaria.domain.interfaces.iEventBot;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
+import net.dv8tion.jda.api.utils.FileUpload;
 
 import java.util.List;
-import java.util.function.Predicate;
 
-public class EventBot {
-    private MessageReceivedEvent event;
+public class EventBot implements iEventBot {
+    private SlashCommandInteractionEvent event;
     private List<String> parts;
 
-    public EventBot(MessageReceivedEvent event) {
-        String[] parts = event.getMessage().getContentRaw().split(" ");
-
+    public EventBot(SlashCommandInteractionEvent event) {
         this.event = event;
-        this.parts = List.of(parts);
-    }
-
-    public void deleteCommandMessage() {
-       this.event.getMessage().delete().queue();
-    }
-
-    public boolean firstParamIsNumber() {
-        if(this.hasNoParams()) return false;
-
-        return this.getParam(1).matches("^[0-9]+$");
-    }
-
-    public boolean falsePredictParamAsInt(int index, Predicate<Integer> predicate) {
-        return this.predictParamAsInt(index, predicate.negate());
-    }
-
-    public boolean predictParamAsInt(int index, Predicate<Integer> predicate) {
-        int param = this.getParamAsInt(index);
-
-        return predicate.test(param);
+        this.parts = List.of(this.event.getCommandString().split(" "));
+        System.out.println(this.parts);
     }
 
     public List<String> getParams() {
@@ -53,31 +36,17 @@ public class EventBot {
         return parts.subList(fromIndex, toIndex);
     }
 
-    public int getParamAsInt(int index) {
-        if(this.notExistParam(index)) return 0;
-
-        return Integer.parseInt(this.getParam(index));
-    }
-
     public boolean existParam(int index) {
         int length = parts.size();
         return index >= 0 && index < length;
-    }
-
-    public boolean notExistParam(int index) {
-        return !this.existParam(index);
     }
 
     public boolean hasParams() {
         return this.parts.size() > 1;
     }
 
-    public boolean hasNoParams() {
-        return !this.hasParams();
-    }
-
     public String getCommand() {
-        return parts.getFirst().toLowerCase();
+        return this.event.getName();
     }
 
     public List<String> getParts() {
@@ -88,7 +57,32 @@ public class EventBot {
         return event.getChannel();
     }
 
-    public MessageReceivedEvent getEvent() {
-        return event;
+    public Guild getGuild() {
+        return event.getGuild();
+    }
+
+    @Override
+    public SlashCommandInteractionEvent getEvent() {
+        return this.event;
+    }
+
+    @Override
+    public User getUser() {
+        return this.event.getUser();
+    }
+
+    @Override
+    public void reply(String message) {
+        event.reply(message).queue();
+    }
+
+    @Override
+    public ReplyCallbackAction replyWithQueue(String message) {
+        return event.reply(message);
+    }
+
+    @Override
+    public void reply(String message, FileUpload... fileUploads) {
+        event.reply(message).addFiles(fileUploads).queue();
     }
 }
