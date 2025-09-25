@@ -1,7 +1,9 @@
 package br.com.pastelaria.domain.commands;
 
 import br.com.pastelaria.domain.interfaces.iCommand;
-import br.com.pastelaria.domain.service.EventBot;
+import br.com.pastelaria.domain.interfaces.iEventBot;
+import br.com.pastelaria.domain.utils.FileUtils;
+import br.com.pastelaria.domain.utils.TimeUtils;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 
 import java.util.concurrent.Executors;
@@ -10,42 +12,43 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Gossip implements iCommand {
+    private static final String IMG = "https://images-ext-1.discordapp.net/external/uZ76GNcLhBArNnUUNHiwfddRm7WEb2-MGe02TETNNQI/https/media.tenor.com/bGvmw1RTg_QAAAPo/pastel-olha.mp4";
+
     @Override
-    public void execute(EventBot event) {
-        event.deleteCommandMessage();
+    public void execute(iEventBot event) {
+        var slashEvent = event.getEvent();
+        String sub = slashEvent.getSubcommandName();
 
-        MessageChannel channel = event.getChannel();
+        AtomicInteger secondsAtomicInteger = new AtomicInteger(3600);
 
-        int seconds = 3600;
+        if(sub != null) {
+            int time = slashEvent.getOption("time").getAsInt();
+            int seconds = TimeUtils.toSeconds(sub, time);
 
-        StringBuilder stringBuilder = new StringBuilder("Hora da fofoca!!");
-
-        if(event.hasParams()) {
-            seconds = Integer.parseInt(event.getParam(1));
-            String addMessage = String.format(" Mensagens apagadas em %d segundos", seconds);
-
-            stringBuilder.append(addMessage);
+            secondsAtomicInteger.set(seconds);
         }
 
-        AtomicInteger atomicInteger = new AtomicInteger();
-        atomicInteger.set(seconds);
+        event.getGuild().createTextChannel("Hora do pastel!")
+                .queue(channel -> {
+            System.out.println("Canal de voz criado: " + channel.getName());
 
-        channel.sendMessage(stringBuilder.toString()).queue(msg -> {
-            msg.delete().queueAfter(atomicInteger.get(), TimeUnit.SECONDS);
+            channel.sendMessage("Hora da pastel!!").queue();
+            channel.sendMessage(IMG).queue();
+
+            String message = String.format("⚠\uFE0F Canal será apagado em %s", TimeUtils.formatSeconds(secondsAtomicInteger.get()));
+
+            channel.sendMessage(message).queue();
+
+            event.reply("✅ Chat da hora do pastel criada!");
+
+            this.executeScheduler(channel, secondsAtomicInteger.get());
         });
-
-        this.executeScheduler(channel, seconds);
     }
 
     private void executeScheduler(MessageChannel channel, long seconds) {
         try( ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1)) {
             scheduler.schedule(() -> {
-                channel.getHistory().retrievePast(100).queue(messages -> {
-                    channel.purgeMessages(messages);
-                    channel.sendMessage("✅ Apaguei " + messages.size() + " mensagens!").queue(msg -> {
-                        msg.delete().queueAfter(5, TimeUnit.SECONDS);
-                    });
-                });
+                channel.delete().queue();
             }, seconds, TimeUnit.SECONDS);
         } catch (Exception e) {
             e.printStackTrace();
