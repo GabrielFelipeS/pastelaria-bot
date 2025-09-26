@@ -39,7 +39,9 @@ public class Gossip implements iCommand {
 
             channel.sendMessage(message).queue();
 
-            event.reply("✅ Chat da hora do pastel criada!");
+            event.replyWithQueue("✅ Chat da hora do pastel criada!").queue(msg -> {
+                msg.deleteOriginal().queueAfter(5, TimeUnit.SECONDS);
+            });
 
             this.executeScheduler(channel, secondsAtomicInteger.get());
         });
