@@ -2,22 +2,20 @@ package br.com.pastelaria.domain.utils;
 
 import net.dv8tion.jda.api.utils.FileUpload;
 
-import java.io.File;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.io.InputStream;
 
 public class FileUtils {
 
     public static FileUpload getFile(String url) {
-        URL resource = FileUtils.class.getClassLoader().getResource(url);
+        InputStream inputStream = FileUtils.class.getClassLoader().getResourceAsStream(url);
 
-        File file = null;
         try {
-            assert resource != null;
-            file = new File(resource.toURI());
-        } catch (URISyntaxException e) {
+            assert inputStream != null;
+            String[] partes = url.split("/");
+            return FileUpload.fromData(inputStream, partes[partes.length - 1]);
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return FileUpload.fromData(file);
+
     }
 }
