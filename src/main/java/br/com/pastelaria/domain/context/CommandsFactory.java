@@ -59,7 +59,9 @@ public class CommandsFactory {
                     )
         );
         add("reload", "Recarrega os comandos", new Reload());
-        add("sextou", "Sextou", new Sextou());
+        add(new Sextou(), Commands.slash("sextou", "Sextou")
+                .addOption(OptionType.INTEGER, "index", "Index da imagem", false)
+        );
     }
 
     public static List<CommandContent> getCommands() {

@@ -1,0 +1,26 @@
+<configuration>
+
+    <!-- Saída no console -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <!-- [%thread] opcional, ajuda em debug multi-thread -->
+            <pattern>[%d{HH:mm:ss}] [%thread] %-5level [%logger{36}] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Logs do seu bot (pacote principal) -->
+    <logger name="br.com.pastelaria.bot" level="DEBUG" additivity="false">
+        <appender-ref ref="CONSOLE" />
+    </logger>
+
+    <!-- Logs do JDA -->
+    <logger name="net.dv8tion.jda" level="INFO" additivity="false">
+        <appender-ref ref="CONSOLE" />
+    </logger>
+
+    <!-- Root logger (tudo que não casar com os acima) -->
+    <root level="WARN">
+        <appender-ref ref="CONSOLE" />
+    </root>
+
+</configuration>
