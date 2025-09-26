@@ -37,10 +37,9 @@ public class Bot extends ListenerAdapter {
 
         var command = commandsStrategy.getCommand(eventBot.getCommand());
 
-        staticLog(eventBot, eventBot.getCommand());
-
        try {
            command.execute(eventBot);
+           staticLog(eventBot, eventBot.getCommand());
        } catch (Exception e) {
            this.exceptionHandler(eventBot, e);
        }
@@ -48,12 +47,15 @@ public class Bot extends ListenerAdapter {
 
     private static void staticLog(EventBot event, String command) {
         logger.debug("{} - executou {} - {}", event.getUser().getName(), command, event.getEvent().getOptions());
-        System.out.format("%s - executou %s - %s", event.getUser().getName(), command, event.getEvent().getOptions());
+        System.err.format("%s - executou %s - %s", event.getUser().getName(), command, event.getEvent().getOptions());
     }
 
-    private void exceptionHandler(EventBot eventBot,Exception exception) {
+    private void exceptionHandler(EventBot event, Exception exception) {
+        logger.debug("Exception: {} - executou {} - {} - {}", event.getUser().getName(), event.getCommand(), event.getEvent().getOptions(), exception.getMessage());
+        System.err.format("Exception: %s - executou %s - %s - %s", event.getUser().getName(), event.getCommand(), event.getEvent().getOptions(), exception.getMessage());
+
         if(exception instanceof ArithmeticException) {
-            eventBot.replyWarning("O valor passado ultrapassa o limite de um inteiro");
+            event.replyWarning("O valor passado ultrapassa o limite de um inteiro");
             return;
         }
     }
