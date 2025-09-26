@@ -27,7 +27,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           source: "target/pastelariaBot-1.0.jar"
-          target: "/home/ubuntu/pastelaria-bot/target/"
+          target: "/home/ubuntu/pastelaria-bot/"
 
       - name: Restart bot on VPS
         uses: appleboy/ssh-action@v0.1.6
