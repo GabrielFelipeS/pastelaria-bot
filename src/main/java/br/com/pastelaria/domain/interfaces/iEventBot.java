@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
 import net.dv8tion.jda.api.utils.FileUpload;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 
 public interface iEventBot {
@@ -69,4 +70,18 @@ public interface iEventBot {
     void reply(String message);
     void reply(String message, FileUpload... fileUploads);
     ReplyCallbackAction replyWithQueue(String message);
+
+    default void replyInfo(String message) {
+        replyWithQueue(message).queue(msg -> {
+            msg.deleteOriginal().queueAfter(5, TimeUnit.SECONDS);
+        });
+    }
+
+    default void replyWarning(String message) {
+        replyInfo("⚠\uFE0F " + message);
+    }
+
+    default void replySuccess(String message) {
+        replyInfo("✅ " + message);
+    }
 }
