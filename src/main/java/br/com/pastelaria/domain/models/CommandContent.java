@@ -5,8 +5,8 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 public class CommandContent {
-    private SlashCommandData slashCommand;
-    private iCommand command;
+    private final SlashCommandData slashCommand;
+    private final iCommand command;
 
     public CommandContent(String commandName, String description, iCommand command) {
         this(Commands.slash(commandName, description), command);
