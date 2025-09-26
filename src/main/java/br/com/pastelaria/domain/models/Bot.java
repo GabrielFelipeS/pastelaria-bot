@@ -37,12 +37,24 @@ public class Bot extends ListenerAdapter {
 
         var command = commandsStrategy.getCommand(eventBot.getCommand());
 
-        staticLog(event.getUser(), eventBot.getCommand());
+        staticLog(eventBot, eventBot.getCommand());
 
-        command.execute(eventBot);
+       try {
+           command.execute(eventBot);
+       } catch (Exception e) {
+           this.exceptionHandler(eventBot, e);
+       }
     }
 
-    private static void staticLog(User user, String command) {
-        logger.debug("{} - executou {}", user.getName(), command);
+    private static void staticLog(EventBot event, String command) {
+        logger.debug("{} - executou {} - {}", event.getUser().getName(), command, event.getEvent().getOptions());
+        System.out.format("%s - executou %s - %s", event.getUser().getName(), command, event.getEvent().getOptions());
+    }
+
+    private void exceptionHandler(EventBot eventBot,Exception exception) {
+        if(exception instanceof ArithmeticException) {
+            eventBot.replyWarning("O valor passado ultrapassa o limite de um inteiro");
+            return;
+        }
     }
 }
