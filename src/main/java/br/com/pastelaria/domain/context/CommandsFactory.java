@@ -29,7 +29,8 @@ public class CommandsFactory {
         add(
             new Scheduler(),
             Commands.slash("scheduler", "Executa um agendamento para X segundos")
-                    .addOption(OptionType.INTEGER, "seconds", "Quantidade de segundos para agendamento", false)
+                    .addOption(OptionType.INTEGER, "seconds", "Quantidade de segundos para agendamento", true)
+                    .addOption(OptionType.STRING, "text", "Texto que vai ser enviado ao agendar", true)
         );
 
         add(

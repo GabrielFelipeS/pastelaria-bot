@@ -14,7 +14,7 @@ public class Scheduler implements iCommand {
     public void execute(iEventBot event) {
         MessageChannel channel = event.getChannel();
 
-        int seconds = Integer.parseInt(event.getParam(1));
+        int seconds = event.getEvent().getOption("seconds").getAsInt();
 
         String message = String.format("✅ Comando agendado para executar em %d segundos", seconds);
 
@@ -22,7 +22,7 @@ public class Scheduler implements iCommand {
 
         try( ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1)) {
             scheduler.schedule(() -> {
-                String schedulerCommand = String.join(" ", event.getParams(2));
+                String schedulerCommand = event.getEvent().getOption("text").getAsString();
 
                 channel.sendMessage(schedulerCommand).queue();
             }, seconds, TimeUnit.SECONDS);
