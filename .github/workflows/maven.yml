@@ -1,4 +1,4 @@
-name: Deploy Bot JDA
+name: Deploy Pastelaria Bot
 
 on:
   push:
@@ -36,6 +36,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
+            cd ./pastelaria-bot
             docker build -t bot-jda .
             docker stop bot-jda
             docker rm bot-jda
