@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class Bot extends ListenerAdapter {
+    private static final CommandsStrategy commandsStrategy = new CommandsStrategy();
     private static final Logger logger = LoggerFactory.getLogger(Bot.class);
 
     public static void jda(JDA jda) {
@@ -32,8 +33,6 @@ public class Bot extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         EventBot eventBot = new EventBot(event);
-
-        CommandsStrategy commandsStrategy = new CommandsStrategy();
 
         var command = commandsStrategy.getCommand(eventBot.getCommand());
 

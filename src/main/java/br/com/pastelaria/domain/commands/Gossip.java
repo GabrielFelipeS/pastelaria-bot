@@ -4,8 +4,11 @@ import br.com.pastelaria.domain.interfaces.iCommand;
 import br.com.pastelaria.domain.interfaces.iEventBot;
 import br.com.pastelaria.domain.utils.FileUtils;
 import br.com.pastelaria.domain.utils.TimeUtils;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 
+import java.util.EnumSet;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -17,25 +20,45 @@ public class Gossip implements iCommand {
     @Override
     public void execute(iEventBot event) {
         var slashEvent = event.getEvent();
+        var guild = event.getGuild();
+
         String sub = slashEvent.getSubcommandName();
 
-        AtomicInteger secondsAtomicInteger = new AtomicInteger(3600);
+        Role role = slashEvent.getOption("role") != null
+                ? slashEvent.getOption("role").getAsRole()
+                : guild.getRolesByName("Estagiário", true).get(0);
 
-        if(sub != null) {
+        AtomicInteger secondsAtomicInteger = new AtomicInteger(28800);
+
+        if(sub != null && !sub.equalsIgnoreCase("default")) {
             int time = slashEvent.getOption("time").getAsInt();
             int seconds = TimeUtils.toSeconds(sub, time);
 
             secondsAtomicInteger.set(seconds);
         }
 
-        event.getGuild().createTextChannel("Hora do pastel!")
+        guild.createTextChannel("Hora do pastel!")
+                .addMemberPermissionOverride(
+                        slashEvent.getJDA().getSelfUser().getIdLong(),
+                        EnumSet.of(Permission.VIEW_CHANNEL, Permission.MESSAGE_SEND),
+                        null
+                )
+                .addRolePermissionOverride(
+                        role.getIdLong(),
+                        EnumSet.of(Permission.VIEW_CHANNEL, Permission.MESSAGE_SEND),
+                        EnumSet.noneOf(Permission.class)
+                )
+                .addRolePermissionOverride(
+                        guild.getPublicRole().getIdLong(),
+                        null,
+                        EnumSet.of(Permission.VIEW_CHANNEL)
+                )
                 .queue(channel -> {
             System.out.println("Canal de voz criado: " + channel.getName());
 
-            channel.sendMessage("Hora da pastel!!").queue();
-            channel.sendMessage(IMG).queue();
+//            channel.sendMessage(IMG).queue();
 
-            String message = String.format("⚠\uFE0F Canal será apagado em %s", TimeUtils.formatSeconds(secondsAtomicInteger.get()));
+            String message = String.format("Hora da pastel!!\n⚠\uFE0F Canal será apagado em %s", TimeUtils.formatSeconds(secondsAtomicInteger.get()));
 
             channel.sendMessage(message).queue();
 

@@ -37,13 +37,19 @@ public class CommandsFactory {
             new Gossip(),
             Commands.slash("gossip", "Cria um canal de texto que é apagado automaticamente em 1 hora ou em X segundos, caso definitdo")
                     .addSubcommands(
+                            new SubcommandData("default", "Cria um canal com tempo default")
+                                    .addOption(OptionType.ROLE, "cargo", "Cargo necessário para acessar a chat ", false),
                             new SubcommandData("seconds", "Cria um canal em minutos")
-                                    .addOption(OptionType.INTEGER, "time", "Tempo para apagar o canal", true),
+                                    .addOption(OptionType.INTEGER, "time", "Tempo para apagar o canal", true)
+                                    .addOption(OptionType.ROLE, "cargo", "Cargo necessário para acessar a chat ", false),
                             new SubcommandData("minutes", "Cria um canal em minutos")
-                                    .addOption(OptionType.INTEGER, "time", "Tempo para apagar o canal", true),
+                                    .addOption(OptionType.INTEGER, "time", "Tempo para apagar o canal", true)
+                                    .addOption(OptionType.ROLE, "cargo", "Cargo necessário para acessar a chat ", false),
                             new SubcommandData("hours", "Cria um canal em minutos")
                                     .addOption(OptionType.INTEGER, "time", "Tempo para apagar o canal", true)
+                                    .addOption(OptionType.ROLE, "cargo", "Cargo necessário para acessar a chat ", false)
                     )
+
         );
 
         add("write", "Manda a mensagem em seguida do comando uma vez ou pela quantidade determinada de vezes", new Write());
